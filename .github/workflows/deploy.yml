@@ -1,0 +1,48 @@
+name: Deploy to GitHub Pages
+
+on:
+  # Deploy on pushes to the default branch only.
+  push:
+    branches: [main]
+  # Allow manual runs from the Actions tab.
+  workflow_dispatch:
+
+# Least-privilege token; the last two are required to deploy to Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment; never cancel an in-progress production deploy.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Build with Astro
+        uses: withastro/action@v6
+        with:
+          # Pin npm explicitly (project standard per CLAUDE.md) instead of
+          # relying on lockfile auto-detection. Runs `npm run build`
+          # (astro check + astro build + pagefind).
+          package-manager: npm
+          node-version: 24
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
