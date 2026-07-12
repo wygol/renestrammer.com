@@ -13,9 +13,9 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# environment variables
+# environment variables (CLAUDE.md requires .env* to be ignored)
 .env
-.env.production
+.env.*
 
 # macOS-specific files
 .DS_Store

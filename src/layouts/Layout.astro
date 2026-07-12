@@ -4,6 +4,7 @@ import { ClientRouter } from "astro:transitions";
 import { getRelativeLocaleUrl } from "astro:i18n";
 import { resolveDefaultOgImagePath } from "@/utils/resolveDefaultOgImagePath";
 import { getAssetPath } from "@/utils/withBase";
+import Analytics from "@/components/Analytics.astro";
 import config from "@/config";
 import "@/styles/global.css";
 
@@ -115,6 +116,9 @@ const rssHref = getRelativeLocaleUrl(
     </script>
 
     <ClientRouter />
+
+    <!-- Web analytics: PostHog EU cloud, prod build only + live domain only -->
+    <Analytics />
   </head>
   <body
     class="bg-background font-app text-foreground selection:bg-accent/75 selection:text-accent-foreground flex min-h-svh flex-col"
