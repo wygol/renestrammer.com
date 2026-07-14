@@ -7,7 +7,7 @@ export default defineAstroPaperConfig({
     description:
       "Geoinformatiker aus Kärnten mit Fokus auf Energiewirtschaft und Entrepreneurship — von der Datenbank bis zur Karte. Blog und Werdegang rund um Geodaten.",
     author: "René Strammer",
-    profile: "https://satna.ing",
+    profile: "https://renestrammer.com/ueber",
     ogImage: "default-og.jpg",
     lang: "de",
     timezone: "Europe/Vienna",
@@ -24,8 +24,7 @@ export default defineAstroPaperConfig({
     showArchives: true,
     showBackButton: true,
     editPost: {
-      enabled: true,
-      url: "https://github.com/satnaing/astro-paper/edit/main/",
+      enabled: false,
     },
     search: "pagefind",
   },
