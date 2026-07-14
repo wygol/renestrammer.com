@@ -1,0 +1,125 @@
+/* Screenshot carousel (progressive enhancement).
+   Markup lives in post content as <figure data-carousel>; behaviour is added by
+   src/scripts/carousel.ts. Without JS it degrades to a scrollable image strip. */
+
+.carousel {
+  margin-block: 2rem;
+}
+
+.carousel__viewport {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  background-color: var(--color-muted);
+  scrollbar-width: none;
+}
+.carousel__viewport::-webkit-scrollbar {
+  display: none;
+}
+
+/* Each markdown image is wrapped in a <p>; that <p> is one slide. */
+.carousel__viewport > * {
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+  margin: 0;
+  display: flex;
+}
+.carousel__viewport img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.carousel__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+.carousel__btn {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: 9999px;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-size: 1.1rem;
+  line-height: 1;
+}
+.carousel__btn:hover {
+  color: var(--color-accent);
+}
+.carousel__dots {
+  display: flex;
+  gap: 0.45rem;
+}
+/* 24px touch target (a11y) with a smaller visual dot drawn via ::before. */
+.carousel__dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.carousel__dot::before {
+  content: "";
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 9999px;
+  background-color: var(--color-muted-foreground);
+  opacity: 0.45;
+  transition:
+    opacity 0.15s,
+    background-color 0.15s;
+}
+.carousel__dot[aria-current="true"]::before {
+  opacity: 1;
+  background-color: var(--color-accent);
+}
+.carousel__caption {
+  margin-top: 0.6rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--color-muted-foreground);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carousel__viewport {
+    scroll-behavior: auto;
+  }
+}
+
+/* Standalone figure with a caption (e.g. charts) inside a post. */
+.post-figure {
+  margin-block: 1.75rem;
+}
+.post-figure > p {
+  margin: 0;
+}
+.post-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  background-color: #fff;
+}
+.post-figure figcaption {
+  margin-top: 0.6rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--color-muted-foreground);
+  /* Override the prose figcaption opacity so the caption keeps enough contrast. */
+  opacity: 1;
+}

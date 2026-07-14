@@ -1,0 +1,76 @@
+/* Privacy-friendly YouTube facade (click-to-load).
+   Poster + play button; nothing is loaded from YouTube until the visitor
+   clicks. Behaviour is added by src/scripts/youtube-facade.ts. Without JS the
+   trigger is a plain link that opens the video on YouTube in a new tab. */
+
+.yt-facade {
+  margin-block: 1.5rem 2rem;
+}
+
+.yt-facade__trigger {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-border);
+  background-color: #000;
+}
+
+.yt-facade__poster {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+}
+.yt-facade__trigger:hover .yt-facade__poster,
+.yt-facade__trigger:focus-visible .yt-facade__poster {
+  transform: scale(1.02);
+  opacity: 0.9;
+}
+
+.yt-facade__play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(15, 23, 42, 0.72);
+  pointer-events: none;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+.yt-facade__trigger:hover .yt-facade__play,
+.yt-facade__trigger:focus-visible .yt-facade__play {
+  color: var(--color-accent);
+  transform: scale(1.06);
+}
+.yt-facade__play svg {
+  width: 4.5rem;
+  height: 4.5rem;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.45));
+}
+
+/* Replaces the trigger once the visitor clicks play. */
+.yt-facade__iframe {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: 0.75rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .yt-facade__poster,
+  .yt-facade__play {
+    transition: none;
+  }
+  .yt-facade__trigger:hover .yt-facade__poster,
+  .yt-facade__trigger:focus-visible .yt-facade__poster {
+    transform: none;
+  }
+}

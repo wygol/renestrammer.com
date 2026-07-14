@@ -1,0 +1,126 @@
+---
+/**
+ * Typewriter effect with rotating phrases — vanilla JS island, no library.
+ *
+ * Accessibility & robustness (per project rules):
+ * - Real, meaningful text in the DOM: the first phrase is rendered server-side,
+ *   so it is visible without JS and for `prefers-reduced-motion` users.
+ * - No layout shift: an invisible sizer layer reserves the height/width of the
+ *   largest phrase, so the line never jumps while typing.
+ * - The animated line is `aria-hidden`; assistive tech reads the full static
+ *   phrase list from an `sr-only` element instead of partial typing output.
+ */
+interface Props {
+  phrases?: string[];
+  class?: string;
+}
+
+const {
+  phrases = [
+    "Geoinformatik für die Energiewirtschaft.",
+    "Von der Datenbank bis zur Karte.",
+    "Ich baue Dinge mit Geodaten.",
+  ],
+  class: className = "",
+} = Astro.props;
+---
+
+<span
+  class:list={["typewriter", className]}
+  data-typewriter
+  data-phrases={JSON.stringify(phrases)}
+>
+  {
+    /* Invisible sizer layer: reserves space for every phrase (no layout shift). */
+  }
+  {
+    phrases.map(phrase => (
+      <span class="typewriter__sizer" aria-hidden="true">
+        {phrase}
+      </span>
+    ))
+  }
+
+  {/* Visible, animated line. Starts as real text so it works without JS. */}
+  <span class="typewriter__line" aria-hidden="true">
+    <span data-typewriter-line>{phrases[0]}</span><span
+      class="typewriter__cursor"></span>
+  </span>
+
+  {/* Static, full phrase list for screen readers and SEO. */}
+  <span class="sr-only">{phrases.join(" ")}</span>
+</span>
+
+<style>
+  .typewriter {
+    display: inline-grid;
+  }
+  .typewriter__sizer,
+  .typewriter__line {
+    grid-area: 1 / 1;
+  }
+  .typewriter__sizer {
+    visibility: hidden;
+  }
+  .typewriter__cursor {
+    display: inline-block;
+    width: 0.08em;
+    align-self: stretch;
+    margin-inline-start: 0.06em;
+    background-color: var(--color-accent, currentColor);
+  }
+  /* Blink only when motion is welcome; static (but visible) otherwise. */
+  @media (prefers-reduced-motion: no-preference) {
+    .typewriter__cursor {
+      animation: typewriter-blink 1s step-end infinite;
+    }
+  }
+  @keyframes typewriter-blink {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }
+</style>
+
+<script>
+  function initTypewriter() {
+    document.querySelectorAll<HTMLElement>("[data-typewriter]").forEach(el => {
+      // Keep static first phrase for reduced-motion users.
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+      const line = el.querySelector<HTMLElement>("[data-typewriter-line]");
+      const phrases: string[] = JSON.parse(el.dataset.phrases ?? "[]");
+      if (!line || phrases.length === 0) return;
+
+      let phrase = 0;
+      let chars = 0;
+      let deleting = false;
+
+      const tick = () => {
+        if (!line.isConnected) return; // stop after a View Transition navigation
+        const text = phrases[phrase];
+        chars += deleting ? -1 : 1;
+        line.textContent = text.slice(0, chars);
+
+        let delay = deleting ? 40 : 90;
+        if (!deleting && chars === text.length) {
+          delay = 1600; // pause on the full phrase
+          deleting = true;
+        } else if (deleting && chars === 0) {
+          deleting = false;
+          phrase = (phrase + 1) % phrases.length;
+          delay = 350;
+        }
+        setTimeout(tick, delay);
+      };
+
+      setTimeout(tick, 700);
+    });
+  }
+
+  document.addEventListener("astro:page-load", initTypewriter);
+</script>

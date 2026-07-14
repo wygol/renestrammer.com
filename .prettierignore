@@ -15,3 +15,13 @@
 
 # Ignore MDX files
 *.mdx
+
+# Internal, non-routed theme content (underscore-prefixed dirs). These hold the
+# theme's release notes / demo posts with intentionally invalid code snippets
+# that Prettier cannot parse. Excluded from the build anyway (glob **/[^_]*).
+src/content/posts/_*/
+
+# Analytics component: holds the vendored, minified PostHog loader (must not be
+# reformatted) inside a conditional inline <script> that prettier-plugin-astro
+# cannot parse. Astro builds it fine.
+src/components/Analytics.astro

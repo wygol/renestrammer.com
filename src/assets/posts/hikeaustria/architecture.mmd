@@ -1,0 +1,73 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'ui-sans-serif, system-ui, sans-serif','primaryTextColor':'#0f172a','lineColor':'#475569','edgeLabelBackground':'#ffffff'}}}%%
+graph TB
+    subgraph sources["External Data Sources"]
+        OSM["OpenStreetMap<br/>Overpass API<br/>(hiking trails)"]
+        GBIF["GBIF<br/>REST API<br/>(biodiversity)"]
+        METAR["FAA Aviation Weather<br/>METAR feed<br/>(live weather)"]
+        CORINE["EEA Copernicus<br/>CORINE 2018 GPKG<br/>(land cover)"]
+        DEM["Austria DEM<br/>local GeoTIFF, 10 m<br/>(elevation — stays local)"]
+    end
+
+    subgraph ingest["Ingestion Layer"]
+        NR["Node-RED<br/>scheduled flows<br/>• METAR every 5 min<br/>• GBIF nightly<br/>(rolling 14-day window)"]
+        PY["Python scripts<br/>• Overpass fetch<br/>• DEM-based difficulty grading<br/>• CORINE load"]
+    end
+
+    subgraph storage["Storage — PostgreSQL / PostGIS"]
+        DB[("PostGIS database<br/>(shared course server)<br/><br/>hiking_trails ≈ 76k<br/>corine_landcover ≈ 39k<br/>gbif_occurrences ≈ 15k<br/>metar_live = 17")]
+    end
+
+    subgraph service["Service Layer — GeoServer"]
+        GS["GeoServer<br/>WMS + WFS endpoints<br/>one layer, many SLD styles<br/>render-time Barnes<br/>interpolation surface"]
+    end
+
+    subgraph frontend["Frontend — Static React SPA"]
+        REACT["React 19 + Vite + TypeScript<br/>Leaflet + react-leaflet<br/>Tailwind v4 • three.js 3D terrain<br/>Clerk auth • react-joyride tour"]
+    end
+
+    subgraph deploy["Deployment — Linux VPS"]
+        CADDY["Caddy<br/>static file server"]
+        CF["Cloudflare<br/>Quick Tunnel<br/>(public HTTPS)"]
+    end
+
+    CLERK["Clerk Frontend API<br/>(authentication)"]
+    TILES["Public tile providers<br/>OSM • OpenTopoMap • Esri"]
+
+    USER(["End user (browser)"])
+
+    OSM --> PY
+    DEM --> PY
+    CORINE --> PY
+    GBIF --> NR
+    METAR --> NR
+
+    PY -- batch INSERT --> DB
+    NR -- INSERT / UPSERT --> DB
+
+    DB -- JDBC --> GS
+    GS -- "WMS GetMap / GetFeatureInfo / GetLegendGraphic" --> USER
+
+    REACT -. built / deployed .-> CADDY
+    CADDY --> CF
+    CF -- public HTTPS --> USER
+
+    CLERK -- auth / session --> USER
+    TILES -- base-map tiles --> USER
+
+    classDef src   fill:#fef3c7,stroke:#b45309,stroke-width:1px,color:#0f172a;
+    classDef ing   fill:#dbeafe,stroke:#1d4ed8,stroke-width:1px,color:#0f172a;
+    classDef store fill:#fce7f3,stroke:#9d174d,stroke-width:1px,color:#0f172a;
+    classDef svc   fill:#dcfce7,stroke:#15803d,stroke-width:1px,color:#0f172a;
+    classDef fe    fill:#ede9fe,stroke:#6d28d9,stroke-width:1px,color:#0f172a;
+    classDef dep   fill:#e0f2fe,stroke:#0369a1,stroke-width:1px,color:#0f172a;
+    classDef ext   fill:#f1f5f9,stroke:#475569,stroke-width:1px,color:#0f172a;
+    classDef user  fill:#ffffff,stroke:#0f172a,stroke-width:2px,color:#0f172a;
+
+    class OSM,GBIF,METAR,CORINE,DEM src;
+    class NR,PY ing;
+    class DB store;
+    class GS svc;
+    class REACT fe;
+    class CADDY,CF dep;
+    class CLERK,TILES ext;
+    class USER user;
