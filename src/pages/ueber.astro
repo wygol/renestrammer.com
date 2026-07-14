@@ -1,0 +1,99 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import Main from "@/components/Main.astro";
+import Footer from "@/components/Footer.astro";
+import Timeline from "@/components/Timeline.astro";
+import {
+  education,
+  experience,
+  skillGroups,
+  publications,
+  languages,
+} from "@/data/cv";
+import config from "@/config";
+
+const title = "Über mich";
+const description =
+  "René Strammer. Geoinformatiker mit Fokus auf Start-Ups und Energiewirtschaft. Werdegang, Stationen und Schwerpunkte.";
+
+// Shared heading style for the supplementary sections (matches Timeline h2).
+const sectionHeading = "mb-6 text-xl font-semibold tracking-wide sm:text-2xl";
+---
+
+<Layout title={`${title} | ${config.site.title}`} description={description}>
+  <Header />
+
+  <Breadcrumb />
+
+  <Main pageTitle={title}>
+    <div class="app-prose">
+      <p>
+        Hey, ich heiße René und bin ein Geoinformatiker aus Kärnten. Mich
+        fasziniert, wie aus rohen Geodaten belastbare Entscheidungen werden und
+        wie man den Prozess technisch aufbaut. Also von der Datenbank über die
+        Analyse bis zur (Web-)Karte. Beruflich konnte ich schon in ein paar
+        Branchen hineinschauen und konnte mich bisher am meisten für Anwendungen
+        in der Energiewirtschaft und für einen eigenen Start-Up Versuch
+        begeistern.
+      </p>
+      <p>
+        Neben dem Studium lese ich gerne Bücher zu allen möglichen Themen und
+        mache gerne Sport.
+      </p>
+      <p>
+        Ich konnte in den letzten Jahren viel lernen und versuche, beruflich
+        zwischen Geoinformatik und Entrepreneurship Fuß zu fassen. In meinem
+        letzten Start-Up Projekt habe ich gemerkt, wie wichtig und schwierig
+        eine gute Marketing bzw. Distributions-Strategie ist. Genau deshalb
+        möchte ich besser in diesen Bereichen werden und suche einen Job im
+        technischen Sales oder Consulting.
+      </p>
+    </div>
+
+    <Timeline title="Erfahrung" entries={experience} />
+    <Timeline title="Ausbildung" entries={education} />
+
+    <section class="mt-10">
+      <h2 class={sectionHeading}>Schwerpunkte & Werkzeuge</h2>
+      <div class="grid gap-4 sm:grid-cols-3">
+        {
+          skillGroups.map(group => (
+            <div class="border-border bg-muted rounded-lg border p-4">
+              <h3 class="mb-2 font-semibold">{group.label}</h3>
+              <ul class="text-foreground/90 space-y-1 text-sm">
+                {group.items.map(item => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="mt-10">
+      <h2 class={sectionHeading}>Publikationen</h2>
+      <ul class="list-disc space-y-1 ps-5">
+        {publications.map(entry => <li>{entry}</li>)}
+      </ul>
+    </section>
+
+    <section class="mt-10">
+      <h2 class={sectionHeading}>Sprachen</h2>
+      <ul class="space-y-1">
+        {
+          languages.map(language => (
+            <li>
+              <span class="font-medium">{language.name}</span> —{" "}
+              {language.level}
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </Main>
+
+  <Footer />
+</Layout>

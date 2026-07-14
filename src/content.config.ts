@@ -16,6 +16,9 @@ const posts = defineCollection({
       featured: z.boolean().optional(),
       draft: z.boolean().optional(),
       tags: z.array(z.string()).default(["others"]),
+      // Content language of the post (BCP-47, e.g. "en"). Drives the <html lang>
+      // and a language badge. Omit for posts in the site default language.
+      lang: z.string().optional(),
       ogImage: image().or(z.string()).optional(),
       description: z.string(),
       canonicalURL: z.string().optional(),

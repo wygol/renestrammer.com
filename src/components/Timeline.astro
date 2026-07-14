@@ -1,0 +1,43 @@
+---
+import type { CvEntry } from "@/data/cv";
+
+interface Props {
+  title: string;
+  entries: CvEntry[];
+}
+
+const { title, entries } = Astro.props;
+---
+
+<section class="mt-10">
+  <h2 class="mb-6 text-xl font-semibold tracking-wide sm:text-2xl">{title}</h2>
+  <ol class="border-border relative ms-2 border-s">
+    {
+      entries.map(entry => (
+        <li class="ms-6 mb-8 last:mb-0">
+          {/* Dot centered on the vertical line; accent when ongoing. */}
+          <span
+            class:list={[
+              "border-background absolute -start-1.5 mt-1.5 size-3 rounded-full border",
+              entry.current ? "bg-accent" : "bg-muted-foreground",
+            ]}
+            aria-hidden="true"
+          />
+          <p class="text-muted-foreground text-sm">{entry.period}</p>
+          <h3 class="text-lg font-semibold">
+            {entry.title}
+            {entry.current && (
+              <span class="bg-accent text-accent-foreground ms-2 rounded-full px-2 py-0.5 align-middle text-xs font-medium">
+                aktuell
+              </span>
+            )}
+          </h3>
+          <p class="text-accent font-medium">{entry.org}</p>
+          {entry.description && (
+            <p class="text-foreground/90 mt-1">{entry.description}</p>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</section>

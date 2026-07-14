@@ -3,13 +3,14 @@ import { defineAstroPaperConfig } from "./src/types/config";
 export default defineAstroPaperConfig({
   site: {
     url: "https://renestrammer.com/",
-    title: "AstroPaper",
-    description: "A minimal, responsive and SEO-friendly Astro blog theme.",
+    title: "Strammer",
+    description:
+      "Geoinformatiker aus Kärnten mit Fokus auf Energiewirtschaft und Entrepreneurship — von der Datenbank bis zur Karte. Blog und Werdegang rund um Geodaten.",
     author: "René Strammer",
     profile: "https://satna.ing",
     ogImage: "default-og.jpg",
-    lang: "en",
-    timezone: "Asia/Bangkok",
+    lang: "de",
+    timezone: "Europe/Vienna",
     dir: "ltr",
   },
   posts: {
@@ -28,12 +29,9 @@ export default defineAstroPaperConfig({
     },
     search: "pagefind",
   },
-  socials: [
-    { name: "github",   url: "https://github.com/satnaing/astro-paper" },
-    { name: "x",        url: "https://x.com/username" },
-    { name: "linkedin", url: "https://www.linkedin.com/in/username/" },
-    { name: "mail",     url: "mailto:yourmail@gmail.com" },
-  ],
+  // TODO-RENE: eigene Social-Profile eintragen (URLs). Solange die Liste leer
+  // ist, wird die Social-Sektion auf Startseite/Footer ausgeblendet.
+  socials: [],
   shareLinks: [
     { name: "whatsapp", url: "https://wa.me/?text=" },
     { name: "facebook", url: "https://www.facebook.com/sharer.php?u=" },

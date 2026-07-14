@@ -69,7 +69,14 @@ const {
   timezone,
   tags,
   hideEditPost,
+  lang,
 } = post.data;
+
+// Show a small language badge when the post differs from the site default
+// (e.g. an English post on the German site).
+const LANG_LABELS: Record<string, string> = { en: "English", de: "Deutsch" };
+const showLangBadge = Boolean(lang) && lang !== config.site.lang;
+const langLabel = lang ? (LANG_LABELS[lang] ?? lang.toUpperCase()) : "";
 
 const { Content } = await render(post);
 
@@ -101,6 +108,7 @@ const ogImage = ogImageUrl
   canonicalURL={canonicalURL}
   pubDatetime={pubDatetime}
   modDatetime={modDatetime}
+  {lang}
 >
   <Header />
 
@@ -120,6 +128,16 @@ const ogImage = ogImageUrl
 
     <div class="my-2 flex items-center gap-2">
       <Datetime {pubDatetime} {modDatetime} {timezone} size="lg" />
+      {
+        showLangBadge && (
+          <span
+            lang={lang}
+            class="border-border text-muted-foreground rounded-full border px-2 py-0.5 text-xs font-medium"
+          >
+            {langLabel}
+          </span>
+        )
+      }
       <span
         aria-hidden="true"
         class:list={[
@@ -161,6 +179,11 @@ const ogImage = ogImageUrl
   </main>
   <Footer />
 </PostLayout>
+
+<script>
+  import "@/scripts/carousel";
+  import "@/scripts/youtube-facade";
+</script>
 
 <script is:inline data-astro-rerun>
   function createProgressBar() {
